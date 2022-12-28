@@ -47,5 +47,15 @@ const config = {
     },
 };
 
+// // // kse 2020
+// const config = {
+//     server: '69.27.254.3', // or 213.175.193.168
+//     database: 'aep',
+//     user :'aep-kse',
+//     password : 'is#kse494',
+//     options: {
+//         encrypt: false, // Important for Eicra
+//     },
+// };
 
 module.exports=config
