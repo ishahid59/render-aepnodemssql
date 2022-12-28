@@ -1535,12 +1535,13 @@ Router.post('/update', upload.single("Image"),
                 req.body.HireDate = `${req.body.HireDate}`
                 console.log(req.body.HireDate);
             }
+            
 
             // // ** NOW to Match with VB app we will put NULL for empty date instead of default 1900-01-01
             // let HireDate = await utils.setNullDate(req.body.HireDate)
             // // Using same function to make MiddleI NULL to match with VB 
             // let MiddleI = await utils.setNullDate(req.body.MiddleI)
-            console.log(req.body);
+            // console.log(req.body);
 
             // **Note no "," after the last field before "WHERE" clause
             let pool = await sql.connect(mssqlconfig)
