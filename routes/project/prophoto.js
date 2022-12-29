@@ -19,16 +19,85 @@ const authenticateToken = require('../../middleware/authenticateToken');
 // AUTHENTICATION FOR INDIVIDUAL ROUTES can be used
 //************************************************************** */
 
-Router.use(authenticateToken); 
+// Router.use(authenticateToken); 
 
 
 
 
 
-// ALL RECORDS FOR DATATABLE
-Router.get('/:projectid', async (req, res) => {
+// // ALL RECORDS FOR DATATABLE
+// Router.get('/:projectid', async (req, res) => {
+
+//     try {
+//         let projectid = req.param("projectid");
+//         let strsql=
+//             `SELECT Pro_Photo.ID, Pro_Photo.PhotoName, Pro_Photo.CreateDate, Emp_Main.EmployeeID AS disCreatedBy, Pro_Photo.LastModifyDate, 
+//             Emp_Main_1.EmployeeID AS disLastModifiedBy, Pro_Photo.CreatedBy, Pro_Photo.LastModifiedBy,Pro_Photo.ImageData,Pro_Photo.Description, Pro_Photo.ProjectID
+//             FROM  Pro_Photo INNER JOIN
+//             Emp_Main ON Pro_Photo.CreatedBy = Emp_Main.EmpID INNER JOIN
+//             Emp_Main AS Emp_Main_1 ON Pro_Photo.LastModifiedBy = Emp_Main_1.EmpID
+//             WHERE (Pro_Photo.ProjectID = ${projectid})
+//             ORDER BY Pro_Photo.PhotoName`
+
+        
+//         let pool = await sql.connect(mssqlconfig)
+//         //let pool = await poolPromise
+//         let result = await pool.request()
+//             // .query(`SELECT emp_degree.empid, list_empdegree.str1 FROM emp_degree INNER JOIN list_empdegree ON emp_degree.degree=list_empdegree.listid WHERE emp_degree.empid=${empid}`)
+//             .query(strsql);
+//             res.send(result.recordset);
+//     } catch (err) {
+//         return res.status(500).send("MSSQL ERROR: " + err);
+//     }
+// })
+
+
+
+
+// ALL RECORDS FOR DATATABLE For ANgular Datatable with POST
+Router.post('/:projectid', async (req, res) => {
+
+    let draw = req.body.draw;
+    let limit = req.body.length;
+    let offset = req.body.start;
+    // let ordercol = req.body['order[0][column]'];
+    // let orderdir = req.body['order[0][dir]'];
+    // let search = req.body['search[value]'];
+    let ordercol = req.body.order[0].column;
+    let orderdir = req.body.order[0].dir;
+    let search = req.body.search.value;
+
+    var columns = {
+        0: 'ProjectID',
+        1: 'ID',
+        2: 'PhotoName',
+        3: 'ImageData',
+        4: 'CreatedBy',
+        5: 'LastModifiedBy',
+        6: 'Description',
+    }
+
+
+    // var totalData = 0;
+    // var totalbeforefilter = 0;
+    var totalFiltered = 0;
+    var col = columns[ordercol];// to get name of order col not index
 
     try {
+        let projectid2 = req.param("projectid");
+        let pool2 = await sql.connect(mssqlconfig)
+        // let pool = await poolPromise
+        let result2 = await pool2.request()
+            .query(`SELECT(SELECT COUNT(*)FROM Pro_Photo WHERE Pro_Photo.ProjectID=${projectid2})  AS Total `)
+        let count = result2.recordset[0].Total;// - 2;
+        totalData = count;
+        // totalbeforefilter = count;
+        totalFiltered = count;
+
+
+
+
+
         let projectid = req.param("projectid");
         let strsql=
             `SELECT Pro_Photo.ID, Pro_Photo.PhotoName, Pro_Photo.CreateDate, Emp_Main.EmployeeID AS disCreatedBy, Pro_Photo.LastModifyDate, 
@@ -36,20 +105,26 @@ Router.get('/:projectid', async (req, res) => {
             FROM  Pro_Photo INNER JOIN
             Emp_Main ON Pro_Photo.CreatedBy = Emp_Main.EmpID INNER JOIN
             Emp_Main AS Emp_Main_1 ON Pro_Photo.LastModifiedBy = Emp_Main_1.EmpID
-            WHERE (Pro_Photo.ProjectID = ${projectid})
-            ORDER BY Pro_Photo.PhotoName`
+            WHERE (Pro_Photo.ProjectID = ${projectid}) `
 
-        
+
+            strsql = strsql + ` order by ${col} ${orderdir} OFFSET ${offset} ROWS FETCH NEXT ${limit} ROWS ONLY`;
+
         let pool = await sql.connect(mssqlconfig)
-        //let pool = await poolPromise
-        let result = await pool.request()
-            // .query(`SELECT emp_degree.empid, list_empdegree.str1 FROM emp_degree INNER JOIN list_empdegree ON emp_degree.degree=list_empdegree.listid WHERE emp_degree.empid=${empid}`)
-            .query(strsql);
-            res.send(result.recordset);
+        let result = await pool.request().query(strsql);
+        res.json({
+            "draw": draw,
+            "recordsTotal": totalData,//4, //
+            "recordsFiltered": totalFiltered,//4,//
+            "data": result.recordset
+        });
     } catch (err) {
         return res.status(500).send("MSSQL ERROR: " + err);
     }
 })
+
+
+
 
 
 // VIEW 1 RECORD

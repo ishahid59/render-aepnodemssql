@@ -25,7 +25,7 @@ const authenticateToken = require('../../middleware/authenticateToken');
 // Also can use for individual routes on top of route files or for individual methods
 // **********************************************************************************
 
-Router.use(authenticateToken); 
+// Router.use(authenticateToken); 
 
 
 
@@ -42,7 +42,7 @@ Router.get('/mssql', async (req, res) => {
             ProjectName, ProjectRole, AwardYear, ProjectManager, 
             OwnerCategory,ComID,PrimaryProjectType,SecondaryProjectType,
             Owner,Client,ProjectAgreementNo,ProjectStatus,ProposalID
-            FROM Pro_Main where ProjectID > ${projectid}`)
+            FROM Pro_Main`)
 
 
         // // Stored procedure

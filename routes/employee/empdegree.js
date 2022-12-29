@@ -77,7 +77,7 @@ Router.use(authenticateToken);
 
 
 
-// ALL Degree For ANgular Datatable
+// ALL Degree For ANgular Datatable with POST
 // Router.get('/:empid', async (req, res) => {
 Router.post('/:empid', async (req, res) => { // for angular datatable
 
@@ -105,7 +105,7 @@ Router.post('/:empid', async (req, res) => { // for angular datatable
     // var totalbeforefilter = 0;
     var totalFiltered = 0;
     var col = columns[ordercol];// to get name of order col not index
-
+ 
     try {
         let empid2 = req.param("empid");
         let pool2 = await sql.connect(mssqlconfig)
