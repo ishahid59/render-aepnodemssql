@@ -19,7 +19,7 @@ const authenticateToken = require('../../middleware/authenticateToken');
 // AUTHENTICATION FOR INDIVIDUAL ROUTES can be used
 //************************************************************** */
 
-// Router.use(authenticateToken); 
+Router.use(authenticateToken); 
 
 
 
@@ -90,7 +90,8 @@ Router.post('/:projectid', async (req, res) => {
         let result2 = await pool2.request()
             .query(`SELECT(SELECT COUNT(*)FROM Pro_Photo WHERE Pro_Photo.ProjectID=${projectid2})  AS Total `)
         let count = result2.recordset[0].Total;// - 2;
-        totalData = count;
+        // totalData = count;
+        totalDataProPhoto = count; //named variables is used to avoid conflict on tab tables
         // totalbeforefilter = count;
         totalFiltered = count;
 
@@ -114,7 +115,7 @@ Router.post('/:projectid', async (req, res) => {
         let result = await pool.request().query(strsql);
         res.json({
             "draw": draw,
-            "recordsTotal": totalData,//4, //
+            "recordsTotal": totalDataProPhoto,//4, //named variables is used to avoid conflict on tab tables
             "recordsFiltered": totalFiltered,//4,//
             "data": result.recordset
         });

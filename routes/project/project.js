@@ -25,7 +25,7 @@ const authenticateToken = require('../../middleware/authenticateToken');
 // Also can use for individual routes on top of route files or for individual methods
 // **********************************************************************************
 
-// Router.use(authenticateToken); 
+Router.use(authenticateToken); 
 
 
 

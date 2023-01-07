@@ -113,7 +113,8 @@ Router.post('/:empid', async (req, res) => { // for angular datatable
         let result2 = await pool2.request()
             .query(`SELECT(SELECT COUNT(*)FROM Emp_Degree WHERE Emp_Degree.EmpID=${empid2})  AS Total `)
         let count = result2.recordset[0].Total;// - 2;
-        totalData = count;
+        // totalData = count;
+        totalDataEmpDegree = count; //named variables is used to avoid conflict on tab tables
         // totalbeforefilter = count;
         totalFiltered = count;
 
@@ -136,8 +137,8 @@ Router.post('/:empid', async (req, res) => { // for angular datatable
         // res.send(result.recordset);
         res.json({
             "draw": draw,
-            "recordsTotal": totalData,//4, //
-            "recordsFiltered": totalFiltered,//4,//
+            "recordsTotal": totalDataEmpDegree,//totalData,//4, // named variables is used to avoid conflict on tab tables
+            "recordsFiltered":totalFiltered,//4,//
             "data": result.recordset
         });
 
